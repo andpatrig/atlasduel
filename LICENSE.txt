@@ -1,0 +1,43 @@
+AtlasDuel — World Country Challenge
+Copyright (c) 2026 [Your Name]. All rights reserved.
+
+Licensed under the PolyForm Noncommercial License 1.0.0:
+https://polyformproject.org/licenses/noncommercial/1.0.0/
+
+PERMITTED USE
+Permission is granted, free of charge, to any person obtaining a copy of
+this software and associated files (the "Software"), to use, run, and
+share copies of the Software for personal, family, educational,
+recreational, or internal organizational purposes — including play at
+home, among friends, at work, at parties, or at other social or
+community gatherings — subject to the following conditions:
+
+  1. This copyright notice and this license shall be included in all
+     copies or substantial portions of the Software.
+  2. The Software is provided free of charge to the people using it
+     under this permission. No fee, subscription, or other form of
+     payment may be charged for access to or use of the Software itself.
+
+PROHIBITED USE
+Without prior written permission from the copyright holder, no person
+or organization may:
+
+  1. Sell, license, sublicense, or otherwise offer the Software (in
+     original or modified form, in whole or in part) commercially,
+     whether as a standalone product, bundled with other products, or
+     as part of a paid service.
+  2. Redistribute the Software, or any modified or derivative version
+     of it, for commercial advantage or monetary compensation.
+  3. Remove or alter this copyright notice or license when
+     redistributing the Software under the permitted-use terms above.
+
+To request permission for a use not covered above, contact [Your Name /
+contact email].
+
+NO WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.

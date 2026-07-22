@@ -87,8 +87,9 @@ ul{list-style:none;margin:0;padding:0;}
 .setup-label{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:baseline;gap:8px;}
 .setup-label .step-num{color:var(--gold);}
 
-.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-@media (max-width:640px){.mode-grid{grid-template-columns:1fr;}}
+.mode-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+@media (max-width:900px){.mode-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:480px){.mode-grid{grid-template-columns:1fr;}}
 .mode-card{
   background:var(--panel-soft);
   border:1px solid var(--panel-border);
@@ -120,6 +121,8 @@ ul{list-style:none;margin:0;padding:0;}
 }
 .chip:hover{border-color:rgba(227,167,58,0.45);}
 .chip.selected{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600;}
+.chip:disabled{opacity:0.35;cursor:not-allowed;}
+.chip:disabled:hover{border-color:var(--panel-border);}
 
 #players-panel{display:flex;flex-direction:column;gap:8px;margin-top:2px;}
 .player-row{display:flex;gap:8px;align-items:center;}
@@ -168,10 +171,49 @@ ul{list-style:none;margin:0;padding:0;}
 #start-btn:active{transform:translateY(0);}
 #start-btn .icon{width:18px;height:18px;}
 
+.start-footer{
+  margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:11.5px;color:var(--muted-dim);
+}
+#about-link{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-family:var(--font-mono);font-size:11.5px;display:inline-flex;align-items:center;gap:5px;
+  text-decoration:underline;text-underline-offset:3px;padding:0;
+}
+#about-link .icon{width:13px;height:13px;}
+#about-link:hover{color:var(--gold);}
+
+/* ============================= ABOUT MODAL ============================= */
+#about-overlay{
+  position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(6,12,20,0.55);backdrop-filter:blur(2px);
+}
+#about-overlay.open{display:flex;}
+#about-card{
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:20px;
+  padding:30px 32px 28px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,0.5);position:relative;
+}
+#about-card h2{font-size:22px;color:var(--paper);margin-bottom:2px;}
+#about-card .about-tagline{font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
+#about-card h3{font-size:13px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin:18px 0 8px;}
+#about-card p{font-size:14px;line-height:1.6;color:var(--muted);margin-bottom:10px;}
+#about-card p strong{color:var(--paper);font-weight:600;}
+#about-card a{color:var(--gold);text-decoration:underline;text-underline-offset:2px;}
+#about-card a:hover{color:var(--paper);}
+#about-card .copyright-line{font-family:var(--font-mono);font-size:12px;color:var(--muted-dim);margin-top:22px;padding-top:16px;border-top:1px solid var(--panel-border);}
+#about-close{
+  position:absolute;top:16px;right:16px;background:none;border:1px solid var(--panel-border);color:var(--muted);
+  width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:color .16s ease, border-color .16s ease;
+}
+#about-close:hover{color:var(--gold);border-color:rgba(227,167,58,0.4);}
+#about-close .icon{width:14px;height:14px;}
+
 /* ============================= GAME SCREEN ============================= */
 #screen-game{background:var(--ocean);}
 #map{width:100%;height:100%;display:block;touch-action:none;cursor:grab;}
-#map.mode1-active .country{cursor:pointer;}
+#map.mode1-active .country,#map.mode4-active .country{cursor:pointer;}
 #map.dimmed{opacity:0.25;filter:blur(3px) saturate(0.6);pointer-events:none;transition:opacity .3s ease, filter .3s ease;}
 #map:active{cursor:grabbing;}
 
@@ -182,8 +224,14 @@ ul{list-style:none;margin:0;padding:0;}
   vector-effect:non-scaling-stroke;
   transition:fill .22s ease;
 }
-#map.mode1-active .country:hover{fill:var(--land-hover);}
+#map.mode1-active .country:hover,#map.mode4-active .country:hover{fill:var(--land-hover);}
 .country.target-country{fill:var(--gold);animation:pulseTarget 1.3s ease-in-out infinite;}
+
+#target-marker{pointer-events:none;}
+#target-marker .marker-dot{fill:var(--gold);}
+#target-marker .marker-ring{fill:none;stroke:var(--gold);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:markerPing 1.6s ease-out infinite;}
+#target-marker .marker-ring-2{animation-delay:0.8s;}
+@keyframes markerPing{0%{r:4;stroke-opacity:0.9;}100%{r:20;stroke-opacity:0;}}
 .country.is-correct{fill:var(--emerald) !important;animation:none;}
 .country.is-wrong{fill:var(--rust) !important;animation:none;}
 @keyframes pulseTarget{0%,100%{filter:drop-shadow(0 0 0 rgba(227,167,58,0));}50%{filter:drop-shadow(0 0 10px rgba(227,167,58,0.85));}}
@@ -211,6 +259,7 @@ ul{list-style:none;margin:0;padding:0;}
 }
 #round-counter{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);white-space:nowrap;}
 #round-counter b{color:var(--paper);}
+@keyframes timerPulse{0%,100%{opacity:1;}50%{opacity:0.55;}}
 .score-strip{display:flex;gap:6px;flex-wrap:wrap;}
 .score-chip{
   display:flex;align-items:center;gap:6px;
@@ -249,6 +298,16 @@ ul{list-style:none;margin:0;padding:0;}
 }
 #prompt-banner .label{color:var(--muted);font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:2px;}
 #prompt-banner .target-name{color:var(--gold);}
+#timer-seconds{
+  font-family:var(--font-mono);font-size:14px;color:var(--paper);white-space:nowrap;
+  display:none;align-items:baseline;gap:5px;
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:999px;
+  padding:6px 16px;backdrop-filter:blur(8px);pointer-events:auto;
+  box-shadow:0 6px 16px rgba(0,0,0,0.25);
+}
+#timer-seconds b{color:var(--gold);font-size:17px;}
+#timer-seconds.urgent{border-color:var(--rust);color:var(--rust);animation:timerPulse 1s ease-in-out infinite;}
+#timer-seconds.urgent b{color:var(--rust);}
 #skip-link{
   background:none;border:none;color:var(--muted);font-size:12.5px;text-decoration:underline;
   text-underline-offset:3px;cursor:pointer;pointer-events:auto;font-family:var(--font-body);
@@ -287,11 +346,13 @@ ul{list-style:none;margin:0;padding:0;}
 /* Mode 3 */
 #mode3-overlay{
   position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;
+  pointer-events:none;
 }
 #mode3-card{
   background:var(--panel);border:1px solid var(--panel-border);border-radius:20px;
   padding:28px 30px 30px;max-width:480px;width:100%;backdrop-filter:blur(10px);
   box-shadow:0 20px 50px rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;gap:20px;
+  pointer-events:auto;
 }
 #mode3-card .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
 #mode3-shape-svg{width:min(52vw,220px);height:min(52vw,220px);}
@@ -405,6 +466,9 @@ ul{list-style:none;margin:0;padding:0;}
     <symbol id="icon-shape" viewBox="0 0 24 24">
       <path d="M4 15c0-4 2-6 5-8 2-1.4 4 .3 6-1 1.6-1 4-.4 4 2.5 0 3-1.5 4-1 7 .4 2.4-1.6 3.5-4 3.5-5 0-10-.5-10-4Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
     </symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24">
+      <path d="M12 2.4l2.7 6.36 6.9.6-5.23 4.56 1.58 6.76L12 16.98l-6 3.8 1.58-6.76-5.23-4.56 6.9-.6L12 2.4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </symbol>
     <symbol id="icon-close" viewBox="0 0 24 24">
       <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
       <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -424,6 +488,11 @@ ul{list-style:none;margin:0;padding:0;}
     <symbol id="icon-arrow" viewBox="0 0 24 24">
       <line x1="4" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
       <polyline points="13,6 19,12 13,18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <line x1="12" y1="10.8" x2="12" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="12" cy="7.4" r="1.15" fill="currentColor"/>
     </symbol>
   </defs>
 </svg>
@@ -458,13 +527,25 @@ ul{list-style:none;margin:0;padding:0;}
           <button class="mode-card" data-mode="3">
             <svg class="icon"><use href="#icon-shape"/></svg>
             <h3>Shape Shift</h3>
-            <p>Only the outline is shown — pick the right name from five options.</p>
+            <p>Only the outline is shown — pick the right name from six options.</p>
+          </button>
+          <button class="mode-card" data-mode="4">
+            <svg class="icon"><use href="#icon-star"/></svg>
+            <h3>Capital Match</h3>
+            <p>We give the capital — click the country it belongs to.</p>
           </button>
         </div>
       </div>
 
       <div class="setup-section">
-        <div class="setup-label"><span class="step-num">02</span> Who's playing</div>
+        <div class="setup-label"><span class="step-num">02</span> Where in the world</div>
+        <div class="chip-row" id="continent-chips">
+          <button class="chip selected" data-continent="world">Worldwide</button>
+        </div>
+      </div>
+
+      <div class="setup-section">
+        <div class="setup-label"><span class="step-num">03</span> Who's playing</div>
         <div class="chip-row" id="player-mode-chips">
           <button class="chip selected" data-players="solo">Solo</button>
           <button class="chip" data-players="multi">Multiplayer</button>
@@ -474,7 +555,7 @@ ul{list-style:none;margin:0;padding:0;}
       </div>
 
       <div class="setup-section">
-        <div class="setup-label"><span class="step-num">03</span> Rounds</div>
+        <div class="setup-label"><span class="step-num">04</span> Rounds</div>
         <div class="chip-row" id="rounds-chips">
           <button class="chip selected" data-rounds="10">10</button>
           <button class="chip" data-rounds="20">20</button>
@@ -484,7 +565,7 @@ ul{list-style:none;margin:0;padding:0;}
       </div>
 
       <div class="setup-section">
-        <div class="setup-label"><span class="step-num">04</span> Clock</div>
+        <div class="setup-label"><span class="step-num">05</span> Clock</div>
         <div class="chip-row" id="timer-chips">
           <button class="chip selected" data-timer="on">Timed · 15s</button>
           <button class="chip" data-timer="off">No timer</button>
@@ -495,6 +576,11 @@ ul{list-style:none;margin:0;padding:0;}
         Start expedition
         <svg class="icon"><use href="#icon-arrow"/></svg>
       </button>
+
+      <div class="start-footer">
+        <span>&copy; 2026 Andres Patrignani. All rights reserved.</span>
+        <button id="about-link" type="button"><svg class="icon"><use href="#icon-info"/></svg>About &amp; License</button>
+      </div>
     </div>
   </section>
 
@@ -515,6 +601,7 @@ ul{list-style:none;margin:0;padding:0;}
     </div>
 
     <div id="prompt-wrap">
+      <span id="timer-seconds"></span>
       <div id="prompt-banner"></div>
       <button id="skip-link" type="button">Skip ›</button>
     </div>
@@ -554,37 +641,68 @@ ul{list-style:none;margin:0;padding:0;}
 
 </div>
 
+<!-- ===================== ABOUT / LICENSE MODAL ===================== -->
+<div id="about-overlay">
+  <div id="about-card">
+    <button id="about-close" type="button" title="Close"><svg class="icon"><use href="#icon-close"/></svg></button>
+    <h2>AtlasDuel</h2>
+    <div class="about-tagline">World Country Challenge</div>
+
+    <p>AtlasDuel is a geography quiz game with four modes — locate countries on the map, name highlighted countries, match shapes, and match capitals — playable solo or as a pass-and-play multiplayer game.</p>
+
+    <h3>License</h3>
+    <p><strong>You're welcome to:</strong> play AtlasDuel free of charge with family, friends, coworkers, or at parties — for fun, at home, at work, or anywhere else people just want to play.</p>
+    <p><strong>Not allowed:</strong> selling this software, redistributing it (as-is or modified) as part of a paid product or service, or otherwise offering it commercially, without prior written permission from the copyright holder.</p>
+    <p>Licensed under the <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/" target="_blank" rel="noopener">PolyForm Noncommercial License 1.0.0</a>.</p>
+
+    <div class="copyright-line">&copy; 2026 Andres Patrignani. All rights reserved. See LICENSE.txt for full terms.</div>
+  </div>
+</div>
+
 <script>
 "use strict";
 /* ============================================================
    DATA
    ============================================================ */
-const DATA_URL = "countries.json"; // swap this file to test different resolutions
+const DATA_URL = "countries.geojson"; // static data file — swap it to change the country set
 const EXCLUDED = new Set(["Antarctica"]);
 let FEATURES = [];
 let QUIZ_NAMES = [];
+let CONTINENTS = [];
+const continentByName = {};
 
+/* Alternate spellings/abbreviations players might type, keyed by the exact
+   country name used in the data file. The data uses abbreviated names
+   (e.g. "Bosnia and Herz.", "S. Sudan", "Dem. Rep. Congo"), so these let the
+   full, natural forms count as correct in the typing modes. */
 const ALIASES = {
   "United States of America": ["usa","us","united states","america","u s a"],
-  "United Kingdom": ["uk","britain","great britain","u k"],
-  "Democratic Republic of the Congo": ["dr congo","drc","congo kinshasa"],
-  "Republic of the Congo": ["congo","congo brazzaville"],
-  "Republic of Serbia": ["serbia"],
-  "United Republic of Tanzania": ["tanzania"],
-  "Ivory Coast": ["cote d ivoire","cote divoire"],
-  "The Bahamas": ["bahamas"],
-  "East Timor": ["timor leste"],
-  "Guinea Bissau": ["guinea-bissau","guineabissau"],
-  "Macedonia": ["north macedonia"],
-  "Swaziland": ["eswatini"],
-  "Czech Republic": ["czechia"],
+  "United Kingdom": ["uk","britain","great britain","u k","england"],
+  "Dem. Rep. Congo": ["dr congo","drc","democratic republic of the congo","congo kinshasa","congo drc"],
+  "Congo": ["republic of the congo","congo brazzaville","rep congo"],
+  "Côte d'Ivoire": ["ivory coast","cote d ivoire","cote divoire"],
+  "Bahamas": ["the bahamas"],
+  "Timor-Leste": ["east timor","timor leste"],
+  "North Macedonia": ["macedonia"],
+  "eSwatini": ["swaziland","eswatini"],
+  "Czechia": ["czech republic"],
   "Myanmar": ["burma"],
-  "South Korea": ["korea south","republic of korea"],
-  "North Korea": ["korea north","dprk"],
+  "South Korea": ["korea south","republic of korea","s korea"],
+  "North Korea": ["korea north","dprk","n korea"],
   "United Arab Emirates": ["uae"],
-  "Bosnia and Herzegovina": ["bosnia"],
-  "Central African Republic": ["car"],
-  "United States Virgin Islands": ["us virgin islands"]
+  "Bosnia and Herz.": ["bosnia","bosnia and herzegovina","bosnia herzegovina"],
+  "Central African Rep.": ["car","central african republic"],
+  "Dominican Rep.": ["dominican republic"],
+  "Eq. Guinea": ["equatorial guinea"],
+  "Marshall Is.": ["marshall islands"],
+  "N. Cyprus": ["northern cyprus","north cyprus"],
+  "S. Sudan": ["south sudan"],
+  "Solomon Is.": ["solomon islands"],
+  "St. Kitts and Nevis": ["saint kitts and nevis","st kitts and nevis","saint kitts","st kitts"],
+  "St. Vin. and Gren.": ["saint vincent and the grenadines","st vincent and the grenadines","saint vincent","st vincent"],
+  "Antigua and Barb.": ["antigua and barbuda","antigua"],
+  "Cabo Verde": ["cape verde"],
+  "Vatican": ["vatican city","holy see"]
 };
 
 function normalizeName(s){
@@ -597,7 +715,7 @@ function normalizeName(s){
     .replace(/\s+/g," ");
 }
 
-const NAME_LOOKUP = {}; // populated once countries.geojson loads, see loadWorldData()
+const NAME_LOOKUP = {}; // populated once the data file loads, see loadWorldData()
 
 function matchAnswer(raw, target){
   const key = normalizeName(raw);
@@ -666,14 +784,15 @@ let countriesG, countryElByName = new Map(), featureByName = new Map();
 let mapW = 0, mapH = 0;
 let transform = {scale:1, x:0, y:0};
 let currentProject = null;
-const MIN_SCALE = 1, MAX_SCALE = 9;
+let ACTIVE_BOUNDS = null; // recomputed per game: whole world, or a single continent
+const MIN_SCALE = 1, MAX_SCALE = 14;
 
 function buildMap(){
   mapEl.innerHTML = "";
   const rect = mapEl.getBoundingClientRect();
   mapW = rect.width; mapH = rect.height;
   mapEl.setAttribute("viewBox", `0 0 ${mapW} ${mapH}`);
-  const project = makeProjection(WORLD_BOUNDS, mapW, mapH, 24);
+  const project = makeProjection(ACTIVE_BOUNDS || WORLD_BOUNDS, mapW, mapH, 24);
   currentProject = project;
   countriesG = document.createElementNS(NS, "g");
   countriesG.id = "countries-g";
@@ -690,12 +809,25 @@ function buildMap(){
     featureByName.set(f.properties.name, f);
   });
   mapEl.appendChild(countriesG);
+
+  const marker = document.createElementNS(NS, "g");
+  marker.id = "target-marker";
+  marker.style.display = "none";
+  marker.innerHTML = '<circle class="marker-ring" cx="0" cy="0" r="4"></circle>' +
+                      '<circle class="marker-ring marker-ring-2" cx="0" cy="0" r="4"></circle>' +
+                      '<circle class="marker-dot" cx="0" cy="0" r="3.5"></circle>';
+  countriesG.appendChild(marker);
+
   applyTransform();
 }
 
 function applyTransform(anim){
   countriesG.style.transition = anim ? "transform .35s ease" : "none";
   countriesG.style.transform = `translate(${transform.x}px,${transform.y}px) scale(${transform.scale})`;
+  const marker = document.getElementById("target-marker");
+  if (marker && marker.dataset.cx !== undefined){
+    marker.setAttribute("transform", `translate(${marker.dataset.cx},${marker.dataset.cy}) scale(${1/transform.scale})`);
+  }
 }
 /* Content occupies local coords [0,mapW]x[0,mapH]. Clamp so any part of the
    content -- including corners/edges like the Falklands near the southern
@@ -716,21 +848,61 @@ function setTransform(t, anim){
 }
 function resetView(anim){ setTransform({scale:1, x:0, y:0}, anim !== false); }
 
+/* For multi-part countries (island nations, archipelagos) the combined
+   bounding box can span huge stretches of empty ocean -- e.g. Palau's outer
+   islets push its overall box to ~5deg wide even though the capital's
+   island group is a tiny fraction of that. Framing on the single largest
+   landmass gives a much more useful zoom target. */
+function boundsOfLargestPart(geometry){
+  const rings = geometry.type === "Polygon" ? [geometry.coordinates[0]]
+    : geometry.type === "MultiPolygon" ? geometry.coordinates.map(poly => poly[0])
+    : [];
+  let best = null, bestArea = -1;
+  rings.forEach(ring => {
+    let lonMin=Infinity, lonMax=-Infinity, latMin=Infinity, latMax=-Infinity;
+    ring.forEach(([lon,lat]) => {
+      if (lon<lonMin) lonMin=lon; if (lon>lonMax) lonMax=lon;
+      if (lat<latMin) latMin=lat; if (lat>latMax) latMax=lat;
+    });
+    const area = (lonMax-lonMin) * (latMax-latMin);
+    if (area > bestArea){ bestArea = area; best = {lonMin, lonMax, latMin, latMax}; }
+  });
+  return best;
+}
+
 /* Gently zoom/pan toward a country so small nations (Palau, Vatican, Brunei...)
    are easy to spot. Bigger countries get little to no zoom; tiny ones are
-   capped so it never feels jarring. */
+   capped so it never feels jarring. A constant-size pulsing marker is placed
+   on top so even pinpoint countries (Vatican, San Marino, Monaco) stay
+   clearly visible no matter how small their actual shape renders. */
 function focusOnCountry(name, anim){
   const feature = featureByName.get(name);
-  if (!feature || !currentProject) return;
-  const bounds = computeBounds([feature]);
+  if (!feature || !currentProject) { hideTargetMarker(); return; }
+  const bounds = boundsOfLargestPart(feature.geometry) || computeBounds([feature]);
   const [x0, y0] = currentProject([bounds.lonMin, bounds.latMin]);
   const [x1, y1] = currentProject([bounds.lonMax, bounds.latMax]);
   const bw = Math.abs(x1 - x0), bh = Math.abs(y1 - y0);
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-  const targetPx = 130;
-  const rawScale = targetPx / Math.max(bw, bh, 10);
-  const scale = Math.min(5.5, Math.max(1.6, rawScale));
+  const targetPx = 150;
+  const rawScale = targetPx / Math.max(bw, bh, 4);
+  const scale = Math.min(8.5, Math.max(1.6, rawScale));
   setTransform({scale, x: mapW/2 - cx*scale, y: mapH/2 - cy*scale}, anim !== false);
+  showTargetMarker(cx, cy);
+}
+function showTargetMarker(cx, cy){
+  const marker = document.getElementById("target-marker");
+  if (!marker) return;
+  marker.dataset.cx = cx;
+  marker.dataset.cy = cy;
+  marker.style.display = "block";
+  marker.setAttribute("transform", `translate(${cx},${cy}) scale(${1/transform.scale})`);
+}
+function hideTargetMarker(){
+  const marker = document.getElementById("target-marker");
+  if (!marker) return;
+  delete marker.dataset.cx;
+  delete marker.dataset.cy;
+  marker.style.display = "none";
 }
 
 /* Pointer-based pan / pinch-zoom / click detection */
@@ -805,6 +977,7 @@ mapEl.addEventListener("dblclick", e => {
 function handleMapClick(target){
   if (!target || !target.dataset || !target.dataset.country) return;
   if (game.mode === 1 && game.awaitingAnswer) evaluateMode1(target.dataset.country, target);
+  else if (game.mode === 4 && game.awaitingAnswer) evaluateMode4(target.dataset.country, target);
 }
 
 let resizeTimer = null;
@@ -813,19 +986,31 @@ window.addEventListener("resize", () => {
   resizeTimer = setTimeout(() => {
     if (document.getElementById("screen-game").classList.contains("active")){
       buildMap();
-      resetView(false);
-      if (game.mode === 1 || game.mode === 2) reRenderMapState();
-      if (game.mode === 2 && game.currentTarget) focusOnCountry(game.currentTarget, false);
+      restoreRoundView();
     }
   }, 180);
 });
 
-function reRenderMapState(){
-  if (!game.awaitingAnswer && game.currentTarget == null) return;
-  countryElByName.forEach(el => el.classList.remove("target-country","is-correct","is-wrong"));
-  if (game.mode === 2 && game.currentTarget){
-    const el = countryElByName.get(game.currentTarget);
-    if (el) el.classList.add("target-country");
+/* Rebuild the current round's map state after the SVG is regenerated (e.g. on
+   resize). Covers both the "still guessing" and "answer revealed" phases of
+   every map-based mode, so nothing silently disappears mid-round. */
+function restoreRoundView(){
+  if (game.currentTarget == null){ resetView(false); return; }
+  const revealed = !game.awaitingAnswer;
+  const el = countryElByName.get(game.currentTarget);
+  if (game.mode === 1){
+    if (revealed && el){ el.classList.add("is-correct"); focusOnCountry(game.currentTarget, false); }
+    else resetView(false);
+  } else if (game.mode === 2){
+    if (revealed){ if (el) el.classList.add(game.lastCorrect ? "is-correct" : "is-wrong"); }
+    else { if (el) el.classList.add("target-country"); }
+    focusOnCountry(game.currentTarget, false);
+  } else if (game.mode === 3){
+    resetView(false);
+    renderShape(game.currentTarget); // shape lives in its own overlay SVG, just redraw it
+  } else if (game.mode === 4){
+    if (revealed) revealCapital();      // re-highlights country + re-drops the capital marker
+    else resetView(false);
   }
 }
 
@@ -833,7 +1018,8 @@ function reRenderMapState(){
    MODE 3 — isolated shape rendering
    ============================================================ */
 function renderShape(name){
-  const feature = FEATURES.find(f => f.properties.name === name);
+  const feature = featureByName.get(name);
+  if (!feature) return;
   const bounds = computeBounds([feature]);
   const project = makeProjection(bounds, 200, 200, 14);
   const d = geometryToPathD(feature.geometry, project);
@@ -858,7 +1044,10 @@ const game = {
   timerEnabled: true,
   timerSeconds: 15,
   advanceTimeoutId: null,
-  timerTimeoutId: null
+  timerTimeoutId: null,
+  continent: "world",
+  quizPool: [],
+  lastCorrect: null
 };
 
 function shuffle(arr){
@@ -870,7 +1059,8 @@ function shuffle(arr){
   return a;
 }
 function pickOptions(correct, count){
-  const pool = QUIZ_NAMES.filter(n => n !== correct);
+  const base = game.quizPool.length >= count ? game.quizPool : QUIZ_NAMES;
+  const pool = base.filter(n => n !== correct);
   const wrong = shuffle(pool).slice(0, count-1);
   return shuffle([correct, ...wrong]);
 }
@@ -879,10 +1069,18 @@ function startGame(config){
   game.mode = config.mode;
   game.players = config.players.map(p => ({...p, score:0}));
   game.activePlayerIndex = 0;
-  game.totalRounds = config.totalRounds;
+  game.continent = config.continent || "world";
+  game.quizPool = game.continent === "world"
+    ? QUIZ_NAMES.slice()
+    : QUIZ_NAMES.filter(n => continentByName[n] === game.continent);
+  ACTIVE_BOUNDS = game.continent === "world"
+    ? WORLD_BOUNDS
+    : computeBounds(FEATURES.filter(f => f.properties.continent === game.continent));
+  const requested = config.totalRounds === "all" ? game.quizPool.length : config.totalRounds;
+  game.totalRounds = Math.max(1, Math.min(requested, game.quizPool.length));
   game.currentRound = 0;
   game.timerEnabled = config.timerEnabled;
-  game.queue = shuffle(QUIZ_NAMES).slice(0, config.totalRounds);
+  game.queue = shuffle(game.quizPool).slice(0, game.totalRounds);
   showScreen("game");
   buildMap();
   resetView(false);
@@ -892,10 +1090,12 @@ function startGame(config){
 
 function setupModeChrome(){
   mapEl.classList.toggle("mode1-active", game.mode === 1);
-  document.getElementById("mode2-panel").style.display = game.mode === 2 ? "block" : "none";
+  mapEl.classList.toggle("mode4-active", game.mode === 4);
+  document.getElementById("mode2-panel").style.display = (game.mode === 2) ? "block" : "none";
   document.getElementById("mode3-overlay").style.display = game.mode === 3 ? "flex" : "none";
   mapEl.classList.toggle("dimmed", game.mode === 3);
   document.getElementById("skip-link").style.display = game.mode === 3 ? "none" : "inline";
+  document.getElementById("reset-view-btn").style.display = game.mode === 3 ? "none" : "";
 }
 
 function nextRound(){
@@ -907,14 +1107,16 @@ function nextRound(){
   game.currentTarget = game.queue[game.currentRound];
   game.currentRound++;
   game.awaitingAnswer = true;
+  game.lastCorrect = null;
   updateHUD();
   renderRound();
-  if (game.timerEnabled) startTimer(); else document.getElementById("timer-fill").style.transition = "none";
+  if (game.timerEnabled) startTimer(); else { document.getElementById("timer-fill").style.transition = "none"; stopTimerDisplay(); }
 }
 
 function renderRound(){
   const banner = document.getElementById("prompt-banner");
   if (game.mode === 1){
+    resetView(false);
     banner.innerHTML = `<span class="label">Find on the map</span><span class="target-name">${game.currentTarget}</span>`;
   } else if (game.mode === 2){
     banner.innerHTML = `<span class="label">Type the highlighted country</span>`;
@@ -928,7 +1130,7 @@ function renderRound(){
   } else if (game.mode === 3){
     banner.innerHTML = "";
     renderShape(game.currentTarget);
-    const options = pickOptions(game.currentTarget, 5);
+    const options = pickOptions(game.currentTarget, 6);
     const wrap = document.getElementById("mode3-options");
     wrap.innerHTML = "";
     options.forEach(name => {
@@ -939,9 +1141,15 @@ function renderRound(){
       btn.addEventListener("click", () => evaluateMode3(name, btn));
       wrap.appendChild(btn);
     });
+  } else if (game.mode === 4){
+    const feature = featureByName.get(game.currentTarget);
+    const capital = feature ? feature.properties.capital : "?";
+    banner.innerHTML = `<span class="label">Click the country with this capital</span><span class="target-name">${capital}</span>`;
+    resetView(true);
   }
 }
 
+let timerIntervalId = null;
 function startTimer(){
   const fill = document.getElementById("timer-fill");
   fill.style.transition = "none";
@@ -951,7 +1159,48 @@ function startTimer(){
     fill.style.transition = `width ${game.timerSeconds}s linear`;
     fill.style.width = "0%";
   });
-  game.timerTimeoutId = setTimeout(() => { if (game.awaitingAnswer) registerAnswer(false); }, game.timerSeconds*1000);
+
+  const secondsEl = document.getElementById("timer-seconds");
+  let remaining = game.timerSeconds;
+  secondsEl.style.display = "inline-flex";
+  secondsEl.classList.remove("urgent");
+  secondsEl.innerHTML = `<b>${remaining}</b>s`;
+  clearInterval(timerIntervalId);
+  timerIntervalId = setInterval(() => {
+    remaining -= 1;
+    secondsEl.innerHTML = `<b>${Math.max(remaining, 0)}</b>s`;
+    secondsEl.classList.toggle("urgent", remaining <= 5);
+    if (remaining <= 0) clearInterval(timerIntervalId);
+  }, 1000);
+
+  game.timerTimeoutId = setTimeout(() => {
+    if (game.awaitingAnswer){ revealOnGiveUp(); registerAnswer(false); }
+  }, game.timerSeconds*1000);
+}
+function stopTimerDisplay(){
+  clearInterval(timerIntervalId);
+  document.getElementById("timer-seconds").style.display = "none";
+}
+
+/* Shared reveal for "gave up" paths -- skipping a round or letting the timer run out.
+   Mirrors the reveal each mode already does on a wrong answer. */
+function revealOnGiveUp(){
+  if (game.mode === 1){
+    const el = countryElByName.get(game.currentTarget);
+    if (el) el.classList.add("is-correct");
+    focusOnCountry(game.currentTarget, true);
+  } else if (game.mode === 2){
+    const el = countryElByName.get(game.currentTarget);
+    if (el){ el.classList.remove("target-country"); el.classList.add("is-wrong"); }
+  } else if (game.mode === 3){
+    document.querySelectorAll("#mode3-options .option-btn").forEach(b => {
+      b.disabled = true;
+      if (b.dataset.name === game.currentTarget) b.classList.add("is-correct");
+    });
+    document.getElementById("mode3-shape-path").classList.add("is-correct");
+  } else if (game.mode === 4){
+    revealCapital();
+  }
 }
 
 function evaluateMode1(name, el){
@@ -961,7 +1210,15 @@ function evaluateMode1(name, el){
   if (!correct){
     const correctEl = countryElByName.get(game.currentTarget);
     if (correctEl) correctEl.classList.add("is-correct");
+    focusOnCountry(game.currentTarget, true);
   }
+  registerAnswer(correct, el);
+}
+function evaluateMode4(name, el){
+  if (!game.awaitingAnswer) return;
+  const correct = name === game.currentTarget;
+  if (!correct) el.classList.add("is-wrong");
+  revealCapital(); // marks the correct country + drops the capital marker either way
   registerAnswer(correct, el);
 }
 function evaluateMode3(name, btn){
@@ -975,19 +1232,39 @@ function evaluateMode3(name, btn){
   document.getElementById("mode3-shape-path").classList.add("is-correct");
   registerAnswer(correct, btn);
 }
-function submitMode2(raw){
+
+/* Mode 4 reveal: always show the country boundary + the exact capital point,
+   whether the guess was right or wrong. */
+function revealCapital(){
+  const target = game.currentTarget;
+  const el = countryElByName.get(target);
+  if (el) el.classList.add("is-correct");
+  const feature = featureByName.get(target);
+  const p = feature && feature.properties;
+  focusOnCountry(target, true);
+  if (p && p.capital_lat != null && p.capital_lon != null && currentProject){
+    const [cx, cy] = currentProject([p.capital_lon, p.capital_lat]);
+    showTargetMarker(cx, cy);
+  }
+}
+
+function submitTextAnswer(raw){
   if (!game.awaitingAnswer) return;
   const correct = matchAnswer(raw, game.currentTarget);
-  const el = countryElByName.get(game.currentTarget);
-  if (el){ el.classList.remove("target-country"); el.classList.add(correct ? "is-correct" : "is-wrong"); }
   renderSuggestions([]);
+  if (game.mode === 2){
+    const el = countryElByName.get(game.currentTarget);
+    if (el){ el.classList.remove("target-country"); el.classList.add(correct ? "is-correct" : "is-wrong"); }
+  }
   registerAnswer(correct);
 }
 
 function registerAnswer(correct, anchorEl){
   if (!game.awaitingAnswer) return;
   game.awaitingAnswer = false;
+  game.lastCorrect = correct;
   clearTimeout(game.timerTimeoutId);
+  clearInterval(timerIntervalId);
   const player = game.players[game.activePlayerIndex];
   if (correct){
     player.score += 1;
@@ -996,7 +1273,7 @@ function registerAnswer(correct, anchorEl){
   updateHUD();
   showFeedback(correct);
   showNextButton();
-  game.advanceTimeoutId = setTimeout(advance, 1500);
+  game.advanceTimeoutId = setTimeout(advance, 2250);
 }
 
 function advance(){
@@ -1007,19 +1284,14 @@ function advance(){
 
 function skipRound(){
   if (!game.awaitingAnswer) return;
-  if (game.mode === 1){
-    const el = countryElByName.get(game.currentTarget);
-    if (el) el.classList.add("is-correct");
-  } else if (game.mode === 2){
-    const el = countryElByName.get(game.currentTarget);
-    if (el){ el.classList.remove("target-country"); el.classList.add("is-wrong"); }
-  }
+  revealOnGiveUp();
   registerAnswer(false);
 }
 
 function clearFeedback(){
   countryElByName.forEach(el => el.classList.remove("target-country","is-correct","is-wrong"));
   document.getElementById("toast").classList.remove("show","correct","wrong");
+  hideTargetMarker();
 }
 
 function showFeedback(correct){
@@ -1076,7 +1348,7 @@ function endGame(){
 }
 
 /* ============================================================
-   AUTOCOMPLETE (mode 2)
+   AUTOCOMPLETE (text-entry mode: 2 "Name it")
    ============================================================ */
 const guessInput = document.getElementById("guess-input");
 const suggestionsEl = document.getElementById("suggestions");
@@ -1098,7 +1370,7 @@ function renderSuggestions(list){
 }
 function selectSuggestion(name){
   guessInput.value = name;
-  submitMode2(name);
+  submitTextAnswer(name);
 }
 function updateActiveSuggestion(){
   [...suggestionsEl.children].forEach((li,i) => li.classList.toggle("active", i === activeSuggestion));
@@ -1108,7 +1380,8 @@ function updateActiveSuggestion(){
 guessInput.addEventListener("input", () => {
   const norm = normalizeName(guessInput.value);
   if (!norm){ renderSuggestions([]); return; }
-  const matches = QUIZ_NAMES.filter(n => normalizeName(n).startsWith(norm)).slice(0,6);
+  const pool = game.quizPool.length ? game.quizPool : QUIZ_NAMES;
+  const matches = pool.filter(n => normalizeName(n).startsWith(norm)).slice(0,6);
   renderSuggestions(matches);
 });
 guessInput.addEventListener("keydown", e => {
@@ -1118,7 +1391,7 @@ guessInput.addEventListener("keydown", e => {
   else if (e.key === "Enter"){
     e.preventDefault();
     if (activeSuggestion >= 0 && items[activeSuggestion]) selectSuggestion(items[activeSuggestion].dataset.name);
-    else submitMode2(guessInput.value);
+    else submitTextAnswer(guessInput.value);
   } else if (e.key === "Escape"){ renderSuggestions([]); }
 });
 
@@ -1126,6 +1399,7 @@ guessInput.addEventListener("keydown", e => {
    SETUP SCREEN
    ============================================================ */
 let selectedMode = 1;
+let selectedContinent = "world";
 let playersMode = "solo";
 let playerNames = ["Player 1", "Player 2"];
 let selectedRounds = 10;
@@ -1153,11 +1427,51 @@ document.querySelectorAll("#player-mode-chips .chip").forEach(chip => {
     renderPlayersPanel();
   });
 });
+function poolSizeFor(continent){
+  if (continent === "world") return QUIZ_NAMES.length;
+  return QUIZ_NAMES.filter(n => continentByName[n] === continent).length;
+}
+/* Keeps the rounds chips honest about how many countries are actually in
+   play for the selected continent: fixed counts that exceed the pool are
+   disabled rather than silently clamped later, and if the currently
+   selected count becomes invalid, selection falls back to "All". */
+function updateRoundsChips(){
+  const size = poolSizeFor(selectedContinent);
+  const chips = [...document.querySelectorAll("#rounds-chips .chip")];
+  const allChip = document.querySelector('#rounds-chips .chip[data-rounds="all"]');
+  if (allChip) allChip.textContent = `All (${size})`;
+  let selectionInvalidated = false;
+  chips.forEach(chip => {
+    if (chip.dataset.rounds === "all") return;
+    const n = parseInt(chip.dataset.rounds, 10);
+    const fits = n <= size;
+    chip.disabled = !fits;
+    chip.title = fits ? "" : `Only ${size} countries in this selection`;
+    if (!fits && chip.classList.contains("selected")) selectionInvalidated = true;
+  });
+  if (selectionInvalidated && allChip){
+    chips.forEach(c => c.classList.remove("selected"));
+    allChip.classList.add("selected");
+    selectedRounds = "all";
+  }
+}
+function wireContinentChips(){
+  document.querySelectorAll("#continent-chips .chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("#continent-chips .chip").forEach(c => c.classList.remove("selected"));
+      chip.classList.add("selected");
+      selectedContinent = chip.dataset.continent;
+      updateRoundsChips();
+    });
+  });
+}
+
 document.querySelectorAll("#rounds-chips .chip").forEach(chip => {
   chip.addEventListener("click", () => {
+    if (chip.disabled) return;
     document.querySelectorAll("#rounds-chips .chip").forEach(c => c.classList.remove("selected"));
     chip.classList.add("selected");
-    selectedRounds = chip.dataset.rounds === "all" ? QUIZ_NAMES.length : parseInt(chip.dataset.rounds, 10);
+    selectedRounds = chip.dataset.rounds === "all" ? "all" : parseInt(chip.dataset.rounds, 10);
   });
 });
 document.querySelectorAll("#timer-chips .chip").forEach(chip => {
@@ -1212,7 +1526,7 @@ document.getElementById("start-btn").addEventListener("click", () => {
   } else {
     players = playerNames.map((n,i) => ({id:i, name: (n && n.trim()) ? n.trim() : `Player ${i+1}`}));
   }
-  startGame({mode: selectedMode, players, totalRounds: selectedRounds, timerEnabled: timerOn});
+  startGame({mode: selectedMode, players, totalRounds: selectedRounds, timerEnabled: timerOn, continent: selectedContinent});
 });
 
 document.getElementById("next-btn").addEventListener("click", advance);
@@ -1220,13 +1534,25 @@ document.getElementById("skip-link").addEventListener("click", skipRound);
 document.getElementById("quit-btn").addEventListener("click", () => {
   clearTimeout(game.advanceTimeoutId);
   clearTimeout(game.timerTimeoutId);
+  clearInterval(timerIntervalId);
   showScreen("start");
 });
 document.getElementById("reset-view-btn").addEventListener("click", () => resetView(true));
 document.getElementById("play-again-btn").addEventListener("click", () => {
-  startGame({mode: game.mode, players: game.players.map(p => ({id:p.id, name:p.name})), totalRounds: game.totalRounds, timerEnabled: game.timerEnabled});
+  startGame({mode: game.mode, players: game.players.map(p => ({id:p.id, name:p.name})), totalRounds: game.totalRounds, timerEnabled: game.timerEnabled, continent: game.continent});
 });
 document.getElementById("new-game-btn").addEventListener("click", () => showScreen("start"));
+
+/* ============================================================
+   ABOUT / LICENSE MODAL
+   ============================================================ */
+const aboutOverlay = document.getElementById("about-overlay");
+function openAbout(){ aboutOverlay.classList.add("open"); }
+function closeAbout(){ aboutOverlay.classList.remove("open"); }
+document.getElementById("about-link").addEventListener("click", openAbout);
+document.getElementById("about-close").addEventListener("click", closeAbout);
+aboutOverlay.addEventListener("click", e => { if (e.target === aboutOverlay) closeAbout(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && aboutOverlay.classList.contains("open")) closeAbout(); });
 
 /* ============================================================
    START-SCREEN WATERMARK
@@ -1243,8 +1569,8 @@ function drawWatermark(){
 }
 
 /* ============================================================
-   LOAD WORLD DATA (static file fetch, so you can swap resolutions
-   just by replacing countries.geojson without touching this HTML)
+   LOAD WORLD DATA (static file fetch, so the country set can be
+   swapped by replacing the data file without touching this HTML)
    ============================================================ */
 async function loadWorldData(){
   const startBtn = document.getElementById("start-btn");
@@ -1261,8 +1587,20 @@ async function loadWorldData(){
     Object.entries(ALIASES).forEach(([canon, aliases]) => {
       aliases.forEach(a => { NAME_LOOKUP[normalizeName(a)] = canon; });
     });
+    FEATURES.forEach(f => { continentByName[f.properties.name] = f.properties.continent; });
+    CONTINENTS = [...new Set(FEATURES.map(f => f.properties.continent))].sort();
+    const continentRow = document.getElementById("continent-chips");
+    CONTINENTS.forEach(cont => {
+      const chip = document.createElement("button");
+      chip.className = "chip";
+      chip.type = "button";
+      chip.dataset.continent = cont;
+      chip.textContent = cont;
+      continentRow.appendChild(chip);
+    });
+    wireContinentChips();
     WORLD_BOUNDS = computeBounds(FEATURES);
-    document.querySelector('#rounds-chips .chip[data-rounds="all"]').textContent = `All (${QUIZ_NAMES.length})`;
+    updateRoundsChips();
     drawWatermark();
     startBtn.disabled = false;
     startBtn.innerHTML = originalLabel;
