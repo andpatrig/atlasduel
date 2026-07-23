@@ -480,7 +480,7 @@ ul{list-style:none;margin:0;padding:0;}
           <button class="mode-card" data-mode="4">
             <svg class="icon"><use href="#icon-star"/></svg>
             <h3>Capital Match</h3>
-            <p>We give the capital — type the country it belongs to.</p>
+            <p>We give the capital — click the country it belongs to.</p>
           </button>
         </div>
       </div>
@@ -900,7 +900,9 @@ mapEl.addEventListener("dblclick", e => {
 
 function handleMapClick(target){
   if (!target || !target.dataset || !target.dataset.country) return;
-  if (game.mode === 1 && game.awaitingAnswer) evaluateMode1(target.dataset.country, target);
+  if (!game.awaitingAnswer) return;
+  if (game.mode === 1) evaluateMode1(target.dataset.country, target);
+  else if (game.mode === 4) evaluateMode4(target.dataset.country, target);
 }
 
 let resizeTimer = null;
@@ -1012,8 +1014,8 @@ function startGame(config){
 }
 
 function setupModeChrome(){
-  mapEl.classList.toggle("mode1-active", game.mode === 1);
-  document.getElementById("mode2-panel").style.display = (game.mode === 2 || game.mode === 4) ? "block" : "none";
+  mapEl.classList.toggle("mode1-active", game.mode === 1 || game.mode === 4);
+  document.getElementById("mode2-panel").style.display = game.mode === 2 ? "block" : "none";
   document.getElementById("mode3-overlay").style.display = game.mode === 3 ? "flex" : "none";
   mapEl.classList.toggle("dimmed", game.mode === 3);
   document.getElementById("skip-link").style.display = game.mode === 3 ? "none" : "inline";
@@ -1064,12 +1066,8 @@ function renderRound(){
   } else if (game.mode === 4){
     const feature = featureByName.get(game.currentTarget);
     const capital = feature ? feature.properties.capital : "?";
-    banner.innerHTML = `<span class="label">Which country has this capital?</span><span class="target-name">${capital}</span>`;
+    banner.innerHTML = `<span class="label">Click the country with this capital</span><span class="target-name">${capital}</span>`;
     resetView(false);
-    const input = document.getElementById("guess-input");
-    input.value = "";
-    renderSuggestions([]);
-    setTimeout(() => input.focus(), 50);
   }
 }
 
@@ -1136,6 +1134,16 @@ function evaluateMode1(name, el){
     if (correctEl) correctEl.classList.add("is-correct");
     focusOnCountry(game.currentTarget, true);
   }
+  registerAnswer(correct, el);
+}
+/* Capital Match is answered by clicking a country. Either way the reveal is the
+   same as before: the correct country lights up and a marker drops on its
+   capital, with the map framing it. */
+function evaluateMode4(name, el){
+  if (!game.awaitingAnswer) return;
+  const correct = name === game.currentTarget;
+  if (!correct) el.classList.add("is-wrong");
+  revealCapital();
   registerAnswer(correct, el);
 }
 function evaluateMode3(name, btn){
