@@ -130,6 +130,8 @@ ul{list-style:none;margin:0;padding:0;}
 }
 .chip:hover{border-color:rgba(227,167,58,0.45);}
 .chip.selected{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600;}
+.chip:disabled{opacity:0.32;cursor:not-allowed;}
+.chip:disabled:hover{border-color:var(--panel-border);}
 
 #players-panel{display:flex;flex-direction:column;gap:8px;margin-top:2px;}
 .player-row{display:flex;gap:8px;align-items:center;}
@@ -227,10 +229,6 @@ ul{list-style:none;margin:0;padding:0;}
 }
 #round-counter{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);white-space:nowrap;}
 #round-counter b{color:var(--paper);}
-#timer-seconds{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);white-space:nowrap;display:none;padding-left:12px;border-left:1px solid var(--panel-border);}
-#timer-seconds b{color:var(--paper);}
-#timer-seconds.urgent{color:var(--rust);animation:timerPulse 1s ease-in-out infinite;}
-#timer-seconds.urgent b{color:var(--rust);}
 @keyframes timerPulse{0%,100%{opacity:1;}50%{opacity:0.55;}}
 .score-strip{display:flex;gap:6px;flex-wrap:wrap;}
 .score-chip{
@@ -257,10 +255,22 @@ ul{list-style:none;margin:0;padding:0;}
 
 /* Prompt banner */
 #prompt-wrap{
-  position:absolute;top:78px;left:50%;transform:translateX(-50%);
+  position:absolute;top:70px;left:50%;transform:translateX(-50%);
   z-index:15;display:flex;flex-direction:column;align-items:center;gap:8px;
   pointer-events:none;
 }
+/* The countdown lives directly above the prompt, in the centre of the screen
+   where the player is already looking, rather than tucked into the HUD. */
+#timer-seconds{
+  display:none;align-items:baseline;gap:3px;
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:999px;
+  padding:5px 15px;backdrop-filter:blur(8px);box-shadow:0 6px 16px rgba(0,0,0,0.25);
+  font-family:var(--font-mono);font-size:12.5px;color:var(--muted);white-space:nowrap;
+}
+#timer-seconds.show{display:flex;}
+#timer-seconds b{color:var(--gold);font-size:15.5px;font-weight:700;}
+#timer-seconds.urgent{border-color:var(--rust);color:var(--rust);animation:timerPulse 1s ease-in-out infinite;}
+#timer-seconds.urgent b{color:var(--rust);}
 #prompt-banner{
   background:var(--panel);border:1px solid var(--panel-border);
   border-radius:999px;padding:12px 26px;backdrop-filter:blur(8px);
@@ -335,7 +345,7 @@ ul{list-style:none;margin:0;padding:0;}
 
 /* Toast + next */
 #toast{
-  position:absolute;top:150px;left:50%;transform:translateX(-50%) translateY(-14px);
+  position:absolute;top:196px;left:50%;transform:translateX(-50%) translateY(-14px);
   z-index:30;background:var(--panel);border:1px solid var(--panel-border);border-radius:999px;
   padding:11px 24px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .22s ease, transform .22s ease;
   backdrop-filter:blur(8px);white-space:nowrap;
@@ -393,6 +403,56 @@ ul{list-style:none;margin:0;padding:0;}
   transition:color .16s ease, border-color .16s ease;
 }
 .btn-secondary:hover{color:var(--paper);border-color:var(--muted);}
+
+/* ============================= FOOTER ============================= */
+#site-footer{
+  margin-top:8px;padding-top:18px;border-top:1px solid var(--panel-border);
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;
+  font-size:12px;color:var(--muted-dim);line-height:1.6;
+}
+#site-footer .sep{opacity:0.45;}
+#site-footer a,#site-footer button{
+  color:var(--muted);background:none;border:none;padding:0;font:inherit;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;transition:color .16s ease;
+}
+#site-footer a:hover,#site-footer button:hover{color:var(--gold);}
+
+/* ============================= ABOUT DIALOG ============================= */
+#about-overlay{
+  position:fixed;inset:0;z-index:60;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(6,12,20,0.72);backdrop-filter:blur(4px);
+}
+#about-overlay.open{display:flex;}
+#about-dialog{
+  position:relative;background:var(--panel);border:1px solid var(--panel-border);
+  border-radius:20px;padding:30px 30px 26px;max-width:540px;width:100%;
+  max-height:86vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.5);
+  backdrop-filter:blur(10px);
+}
+#about-dialog h2{font-size:24px;color:var(--paper);margin-bottom:4px;}
+#about-dialog .eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--gold);display:block;margin-bottom:14px;
+}
+#about-dialog h3{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;font-weight:500;
+  text-transform:uppercase;color:var(--muted);margin:22px 0 8px;
+}
+#about-dialog p{font-size:14px;line-height:1.6;color:var(--paper);margin-bottom:10px;}
+#about-dialog p.dim{color:var(--muted);font-size:13px;}
+#about-dialog ul{display:flex;flex-direction:column;gap:7px;}
+#about-dialog li{font-size:13px;line-height:1.55;color:var(--muted);padding-left:14px;position:relative;}
+#about-dialog li::before{content:"·";position:absolute;left:3px;color:var(--gold);}
+#about-dialog a{color:var(--gold);text-decoration:underline;text-underline-offset:3px;}
+#about-close{
+  position:absolute;top:14px;right:14px;
+  background:none;border:1px solid var(--panel-border);color:var(--muted);
+  width:34px;height:34px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:color .16s ease,border-color .16s ease;
+}
+#about-close:hover{color:var(--gold);border-color:rgba(227,167,58,0.4);}
 
 @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 </style>
@@ -514,9 +574,9 @@ ul{list-style:none;margin:0;padding:0;}
       <div class="setup-section">
         <div class="setup-label"><span class="step-num">04</span> Rounds</div>
         <div class="chip-row" id="rounds-chips">
-          <button class="chip" data-rounds="3">3</button>
+          <button class="chip selected" data-rounds="3">3</button>
           <button class="chip" data-rounds="5">5</button>
-          <button class="chip selected" data-rounds="10">10</button>
+          <button class="chip" data-rounds="10">10</button>
           <button class="chip" data-rounds="20">20</button>
           <button class="chip" data-rounds="all">All (…)</button>
         </div>
@@ -534,6 +594,16 @@ ul{list-style:none;margin:0;padding:0;}
         Start expedition
         <svg class="icon"><use href="#icon-arrow"/></svg>
       </button>
+
+      <footer id="site-footer">
+        <span>© 2026 AtlasDuel</span>
+        <span class="sep">·</span>
+        <button id="about-link" type="button">About</button>
+        <span class="sep">·</span>
+        <span>Licensed under <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/" target="_blank" rel="noopener">Polyform Noncommercial 1.0.0</a> — free to play and share, not for commercial use</span>
+        <span class="sep">·</span>
+        <span>Map data © <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a></span>
+      </footer>
     </div>
   </section>
 
@@ -546,7 +616,6 @@ ul{list-style:none;margin:0;padding:0;}
       <div class="hud-brand"><svg class="icon compass-icon"><use href="#icon-compass"/></svg></div>
       <div class="hud-panel">
         <span id="round-counter">Round <b>1</b> / 10</span>
-        <span id="timer-seconds"></span>
         <div class="score-strip" id="score-strip"></div>
       </div>
       <div id="hud-spacer"></div>
@@ -555,6 +624,7 @@ ul{list-style:none;margin:0;padding:0;}
     </div>
 
     <div id="prompt-wrap">
+      <div id="timer-seconds" aria-live="off"></div>
       <div id="prompt-banner"></div>
       <button id="skip-link" type="button">Skip ›</button>
     </div>
@@ -591,6 +661,28 @@ ul{list-style:none;margin:0;padding:0;}
       </div>
     </div>
   </section>
+
+  <!-- ===================== ABOUT DIALOG ===================== -->
+  <div id="about-overlay" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <div id="about-dialog">
+      <button id="about-close" type="button" aria-label="Close"><svg class="icon" style="width:14px;height:14px"><use href="#icon-close"/></svg></button>
+      <span class="eyebrow">About</span>
+      <h2 id="about-title">AtlasDuel</h2>
+      <p>A world geography game built around four ways of knowing the map: point out a named country, name a highlighted one, recognise a country from its outline alone, or match a capital to the country it belongs to.</p>
+      <p>Play it solo to sharpen your own geography, head-to-head with friends or family, as a quick warm-up at work, or pass a phone or laptop around as a group game at parties. Add up to six players, pick a continent or take on the whole world, and set the round count from a three-round taster to every country on the map.</p>
+
+      <h3>License</h3>
+      <p class="dim">AtlasDuel is released under the <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/" target="_blank" rel="noopener">Polyform Noncommercial License 1.0.0</a>. You're free to play, copy, modify, and share it for personal, educational, and other noncommercial purposes. Commercial use is not permitted — you may not sell it, bundle it into a paid product, or run it as part of a commercial service.</p>
+
+      <h3>Credits</h3>
+      <ul>
+        <li>Country boundaries, continents, and capital coordinates from <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>, released into the public domain.</li>
+        <li>Capital names and currencies from the open <a href="https://github.com/mledoze/countries" target="_blank" rel="noopener">mledoze/countries</a> dataset, under the ODbL.</li>
+        <li>Typefaces Fraunces, Space Grotesk, and JetBrains Mono, served by Google Fonts under the SIL Open Font License.</li>
+        <li>Borders and country lists follow the source data and are not a statement about any disputed territory.</li>
+      </ul>
+    </div>
+  </div>
 
 </div>
 
@@ -676,9 +768,41 @@ function computeBounds(features){
     else if (geom.type === "MultiPolygon") geom.coordinates.forEach(poly => poly.forEach(visitRing));
   }
   features.forEach(f => visitGeom(f.geometry));
-  return {lonMin, lonMax, latMin, latMax};
+  return {lonMin, lonMax, latMin, latMax, wrap:false};
 }
 let WORLD_BOUNDS = null;
+
+/* A plain min/max longitude box breaks for any region that straddles the
+   antimeridian: Oceania (Fiji/Kiribati), North America (the Aleutians) and
+   Europe (Russia's Chukotka) all come out as a full 360deg span, which is why
+   picking those continents used to leave the map framed on the whole world.
+   Instead, find the widest empty longitude gap and use its complement as the
+   window -- the smallest arc that still contains every point. Longitudes past
+   +180 are unwrapped by the projection below, so the frame stays continuous. */
+function computeWrappedBounds(features){
+  const plain = computeBounds(features);
+  const lons = [];
+  function visitRing(ring){ for (const pt of ring) lons.push(pt[0]); }
+  function visitGeom(geom){
+    if (geom.type === "Polygon") geom.coordinates.forEach(visitRing);
+    else if (geom.type === "MultiPolygon") geom.coordinates.forEach(poly => poly.forEach(visitRing));
+  }
+  features.forEach(f => visitGeom(f.geometry));
+  if (!lons.length) return plain;
+  lons.sort((a,b) => a-b);
+  let gapStart = 0, gapSize = -1;
+  for (let i=0;i<lons.length;i++){
+    const a = lons[i], b = lons[(i+1) % lons.length];
+    const gap = ((b - a) % 360 + 360) % 360;
+    if (gap > gapSize){ gapSize = gap; gapStart = i; }
+  }
+  const lonMin = lons[(gapStart+1) % lons.length];
+  const span = 360 - gapSize;
+  // Only take the wrapped window when it's a real improvement, so anything that
+  // genuinely spans the globe keeps the familiar -180..180 framing.
+  if (span >= (plain.lonMax - plain.lonMin) - 1) return plain;
+  return {lonMin, lonMax: lonMin + span, latMin: plain.latMin, latMax: plain.latMax, wrap:true};
+}
 
 function makeProjection(bounds, width, height, padding){
   padding = padding || 0;
@@ -690,7 +814,9 @@ function makeProjection(bounds, width, height, padding){
   const offsetX = padding + (w - mapW) / 2;
   const offsetY = padding + (h - mapH) / 2;
   return function project(pt){
-    const x = (pt[0] - bounds.lonMin) * scale + offsetX;
+    let lon = pt[0];
+    if (bounds.wrap) lon = bounds.lonMin + (((lon - bounds.lonMin) % 360) + 360) % 360;
+    const x = (lon - bounds.lonMin) * scale + offsetX;
     const y = (bounds.latMax - pt[1]) * scale + offsetY;
     return [x, y];
   };
@@ -756,11 +882,17 @@ function buildMap(){
   applyTransform();
 }
 
+const ZOOM_MS = 420;
+const ZOOM_EASE = "cubic-bezier(.32,.72,.28,1)";
 function applyTransform(anim){
-  countriesG.style.transition = anim ? "transform .35s ease" : "none";
+  const ease = `transform ${ZOOM_MS}ms ${ZOOM_EASE}`;
+  countriesG.style.transition = anim ? ease : "none";
   countriesG.style.transform = `translate(${transform.x}px,${transform.y}px) scale(${transform.scale})`;
   const marker = document.getElementById("target-marker");
   if (marker && marker.dataset.cx !== undefined){
+    // The marker counter-scales to stay a constant size, so it has to ease on
+    // exactly the same curve as the map or it balloons mid-animation.
+    marker.style.transition = anim ? ease : "none";
     marker.setAttribute("transform", `translate(${marker.dataset.cx},${marker.dataset.cy}) scale(${1/transform.scale})`);
   }
 }
@@ -786,7 +918,7 @@ function resetView(anim){ setTransform({scale:1, x:0, y:0}, anim !== false); }
    islets push its overall box to ~5deg wide even though the capital's
    island group is a tiny fraction of that. Framing on the single largest
    landmass gives a much more useful zoom target. */
-function boundsOfLargestPart(geometry){
+function largestRing(geometry){
   const rings = geometry.type === "Polygon" ? [geometry.coordinates[0]]
     : geometry.type === "MultiPolygon" ? geometry.coordinates.map(poly => poly[0])
     : [];
@@ -798,9 +930,23 @@ function boundsOfLargestPart(geometry){
       if (lat<latMin) latMin=lat; if (lat>latMax) latMax=lat;
     });
     const area = (lonMax-lonMin) * (latMax-latMin);
-    if (area > bestArea){ bestArea = area; best = {lonMin, lonMax, latMin, latMax}; }
+    if (area > bestArea){ bestArea = area; best = ring; }
   });
   return best;
+}
+/* Measure the frame in projected pixels rather than raw longitude, so a
+   continent view whose longitudes run past +180 is measured in the same
+   unwrapped frame the country is actually drawn in. */
+function projectedBoxOfLargestPart(geometry, project){
+  const ring = largestRing(geometry);
+  if (!ring || !ring.length) return null;
+  let x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
+  for (const pt of ring){
+    const [x,y] = project(pt);
+    if (x<x0) x0=x; if (x>x1) x1=x;
+    if (y<y0) y0=y; if (y>y1) y1=y;
+  }
+  return {x0, x1, y0, y1};
 }
 
 /* Gently zoom/pan toward a country so small nations (Palau, Vatican, Brunei...)
@@ -811,23 +957,26 @@ function boundsOfLargestPart(geometry){
 function focusOnCountry(name, anim){
   const feature = featureByName.get(name);
   if (!feature || !currentProject) { hideTargetMarker(); return; }
-  const bounds = boundsOfLargestPart(feature.geometry) || computeBounds([feature]);
-  const [x0, y0] = currentProject([bounds.lonMin, bounds.latMin]);
-  const [x1, y1] = currentProject([bounds.lonMax, bounds.latMax]);
-  const bw = Math.abs(x1 - x0), bh = Math.abs(y1 - y0);
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const box = projectedBoxOfLargestPart(feature.geometry, currentProject);
+  if (!box) { hideTargetMarker(); return; }
+  const bw = Math.abs(box.x1 - box.x0), bh = Math.abs(box.y1 - box.y0);
+  const cx = (box.x0 + box.x1) / 2, cy = (box.y0 + box.y1) / 2;
   const targetPx = 150;
   const rawScale = targetPx / Math.max(bw, bh, 4);
   const scale = Math.min(8.5, Math.max(1.6, rawScale));
   setTransform({scale, x: mapW/2 - cx*scale, y: mapH/2 - cy*scale}, anim !== false);
-  showTargetMarker(cx, cy);
+  showTargetMarker(cx, cy, anim !== false);
 }
-function showTargetMarker(cx, cy){
+function showTargetMarker(cx, cy, anim){
   const marker = document.getElementById("target-marker");
   if (!marker) return;
+  const fresh = marker.dataset.cx === undefined;
   marker.dataset.cx = cx;
   marker.dataset.cy = cy;
   marker.style.display = "block";
+  // A marker appearing for the first time shouldn't slide in from wherever the
+  // last one sat, so only ease when it's already on screen.
+  marker.style.transition = (anim && !fresh) ? `transform ${ZOOM_MS}ms ${ZOOM_EASE}` : "none";
   marker.setAttribute("transform", `translate(${cx},${cy}) scale(${1/transform.scale})`);
 }
 function hideTargetMarker(){
@@ -979,6 +1128,7 @@ const game = {
   timerSeconds: 15,
   advanceTimeoutId: null,
   timerTimeoutId: null,
+  zoomTimeoutId: null,
   continent: "world",
   quizPool: [],
   lastCorrect: null
@@ -1000,6 +1150,10 @@ function pickOptions(correct, count){
 }
 
 function startGame(config){
+  clearTimeout(game.advanceTimeoutId);
+  clearTimeout(game.timerTimeoutId);
+  clearTimeout(game.zoomTimeoutId);
+  clearInterval(timerIntervalId);
   game.mode = config.mode;
   game.players = config.players.map(p => ({...p, score:0}));
   game.activePlayerIndex = 0;
@@ -1009,7 +1163,7 @@ function startGame(config){
     : QUIZ_NAMES.filter(n => continentByName[n] === game.continent);
   ACTIVE_BOUNDS = game.continent === "world"
     ? WORLD_BOUNDS
-    : computeBounds(FEATURES.filter(f => f.properties.continent === game.continent));
+    : computeWrappedBounds(FEATURES.filter(f => f.properties.continent === game.continent));
   const requested = config.totalRounds === "all" ? game.quizPool.length : config.totalRounds;
   game.totalRounds = Math.max(1, Math.min(requested, game.quizPool.length));
   game.currentRound = 0;
@@ -1033,9 +1187,22 @@ function setupModeChrome(){
 function nextRound(){
   clearTimeout(game.advanceTimeoutId);
   clearTimeout(game.timerTimeoutId);
+  clearTimeout(game.zoomTimeoutId);
   hideNextButton();
+  if (game.currentRound >= game.totalRounds){ clearFeedback(); endGame(); return; }
+  /* Glide back out to the full world/continent frame before the next country
+     appears, keeping the previous reveal on screen while it happens, rather
+     than cutting straight from a zoomed-in country to the wide view. */
+  if (game.mode !== 3 && countriesG && transform.scale > 1.01){
+    resetView(true);
+    game.zoomTimeoutId = setTimeout(beginRound, ZOOM_MS + 60);
+  } else {
+    beginRound();
+  }
+}
+
+function beginRound(){
   clearFeedback();
-  if (game.currentRound >= game.totalRounds){ endGame(); return; }
   game.currentTarget = game.queue[game.currentRound];
   game.currentRound++;
   game.awaitingAnswer = true;
@@ -1093,7 +1260,7 @@ function startTimer(){
 
   const secondsEl = document.getElementById("timer-seconds");
   let remaining = game.timerSeconds;
-  secondsEl.style.display = "inline";
+  secondsEl.classList.add("show");
   secondsEl.classList.remove("urgent");
   secondsEl.innerHTML = `<b>${remaining}</b>s`;
   clearInterval(timerIntervalId);
@@ -1110,7 +1277,7 @@ function startTimer(){
 }
 function stopTimerDisplay(){
   clearInterval(timerIntervalId);
-  document.getElementById("timer-seconds").style.display = "none";
+  document.getElementById("timer-seconds").classList.remove("show","urgent");
 }
 
 /* Shared reveal for "gave up" paths -- skipping a round or letting the timer run out.
@@ -1141,9 +1308,11 @@ function evaluateMode1(name, el){
   if (!correct){
     const correctEl = countryElByName.get(game.currentTarget);
     if (correctEl) correctEl.classList.add("is-correct");
-    focusOnCountry(game.currentTarget, true);
   }
   registerAnswer(correct, el);
+  // Frame the answer either way -- the reveal reads the same whether the guess
+  // landed or not, and it gives the between-round zoom-out something to undo.
+  focusOnCountry(game.currentTarget, true);
 }
 /* Capital Match is answered by clicking a country. Either way the reveal is the
    same as before: the correct country lights up and a marker drops on its
@@ -1152,8 +1321,8 @@ function evaluateMode4(name, el){
   if (!game.awaitingAnswer) return;
   const correct = name === game.currentTarget;
   if (!correct) el.classList.add("is-wrong");
-  revealCapital();
   registerAnswer(correct, el);
+  revealCapital();
 }
 function evaluateMode3(name, btn){
   if (!game.awaitingAnswer) return;
@@ -1178,7 +1347,7 @@ function revealCapital(){
   focusOnCountry(target, true);
   if (p && p.capital_lat != null && p.capital_lon != null && currentProject){
     const [cx, cy] = currentProject([p.capital_lon, p.capital_lat]);
-    showTargetMarker(cx, cy);
+    showTargetMarker(cx, cy, true);
   }
 }
 
@@ -1338,7 +1507,7 @@ let selectedMode = 1;
 let selectedContinent = "world";
 let playersMode = "solo";
 let playerNames = ["Player 1", "Player 2"];
-let selectedRounds = 10;
+let selectedRounds = 3;
 let timerOn = true;
 
 function showScreen(id){
@@ -1367,9 +1536,28 @@ function poolSizeFor(continent){
   if (continent === "world") return QUIZ_NAMES.length;
   return QUIZ_NAMES.filter(n => continentByName[n] === continent).length;
 }
-function updateAllRoundsLabel(){
-  const chip = document.querySelector('#rounds-chips .chip[data-rounds="all"]');
-  if (chip) chip.textContent = `All (${poolSizeFor(selectedContinent)})`;
+/* Small continents have fewer countries than the larger round counts, so those
+   chips are greyed out rather than silently clamped at kick-off. */
+function updateRoundsChips(){
+  const pool = poolSizeFor(selectedContinent);
+  const chips = [...document.querySelectorAll("#rounds-chips .chip")];
+  let selectionLost = false;
+  chips.forEach(chip => {
+    if (chip.dataset.rounds === "all"){ chip.textContent = `All (${pool})`; chip.disabled = false; return; }
+    const n = parseInt(chip.dataset.rounds, 10);
+    chip.disabled = n > pool;
+    if (chip.disabled && chip.classList.contains("selected")){
+      chip.classList.remove("selected");
+      selectionLost = true;
+    }
+  });
+  if (selectionLost){
+    const usable = chips.filter(c => !c.disabled && c.dataset.rounds !== "all");
+    const fallback = usable.length ? usable[usable.length-1]
+                                   : document.querySelector('#rounds-chips .chip[data-rounds="all"]');
+    fallback.classList.add("selected");
+    selectedRounds = fallback.dataset.rounds === "all" ? "all" : parseInt(fallback.dataset.rounds, 10);
+  }
 }
 function wireContinentChips(){
   document.querySelectorAll("#continent-chips .chip").forEach(chip => {
@@ -1377,7 +1565,7 @@ function wireContinentChips(){
       document.querySelectorAll("#continent-chips .chip").forEach(c => c.classList.remove("selected"));
       chip.classList.add("selected");
       selectedContinent = chip.dataset.continent;
-      updateAllRoundsLabel();
+      updateRoundsChips();
     });
   });
 }
@@ -1449,6 +1637,7 @@ document.getElementById("skip-link").addEventListener("click", skipRound);
 document.getElementById("quit-btn").addEventListener("click", () => {
   clearTimeout(game.advanceTimeoutId);
   clearTimeout(game.timerTimeoutId);
+  clearTimeout(game.zoomTimeoutId);
   clearInterval(timerIntervalId);
   showScreen("start");
 });
@@ -1457,6 +1646,22 @@ document.getElementById("play-again-btn").addEventListener("click", () => {
   startGame({mode: game.mode, players: game.players.map(p => ({id:p.id, name:p.name})), totalRounds: game.totalRounds, timerEnabled: game.timerEnabled, continent: game.continent});
 });
 document.getElementById("new-game-btn").addEventListener("click", () => showScreen("start"));
+
+/* ============================================================
+   ABOUT DIALOG
+   ============================================================ */
+const aboutOverlay = document.getElementById("about-overlay");
+function openAbout(){
+  aboutOverlay.classList.add("open");
+  document.getElementById("about-close").focus();
+}
+function closeAbout(){ aboutOverlay.classList.remove("open"); }
+document.getElementById("about-link").addEventListener("click", openAbout);
+document.getElementById("about-close").addEventListener("click", closeAbout);
+aboutOverlay.addEventListener("click", e => { if (e.target === aboutOverlay) closeAbout(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && aboutOverlay.classList.contains("open")) closeAbout();
+});
 
 /* ============================================================
    START-SCREEN WATERMARK
@@ -1504,7 +1709,7 @@ async function loadWorldData(){
     });
     wireContinentChips();
     WORLD_BOUNDS = computeBounds(FEATURES);
-    updateAllRoundsLabel();
+    updateRoundsChips();
     drawWatermark();
     startBtn.disabled = false;
     startBtn.innerHTML = originalLabel;
