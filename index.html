@@ -405,10 +405,17 @@ ul{list-style:none;margin:0;padding:0;}
 .btn-secondary:hover{color:var(--paper);border-color:var(--muted);}
 
 /* ============================= FOOTER ============================= */
-#site-footer{
-  margin-top:8px;padding-top:18px;border-top:1px solid var(--panel-border);
-  display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;
-  font-size:12px;color:var(--muted-dim);line-height:1.6;
+#site-footer {
+  margin-top: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;     /* Stacks lines vertically */
+  align-items: flex-start;    /* Aligns all lines to the left */
+  gap: 6px;                   /* Vertical spacing between lines */
+  font-size: 12px;
+  color: var(--muted-dim);
+  line-height: 1.6;
 }
 #site-footer .sep{opacity:0.45;}
 #site-footer a,#site-footer button{
@@ -595,15 +602,19 @@ ul{list-style:none;margin:0;padding:0;}
         <svg class="icon"><use href="#icon-arrow"/></svg>
       </button>
 
-      <footer id="site-footer">
+    <footer id="site-footer">
+      <div>
         <span>© 2026 AtlasDuel</span>
-        <span class="sep">·</span>
+        <span class="sep">|</span>
         <button id="about-link" type="button">About</button>
-        <span class="sep">·</span>
+      </div>
+      <div>
         <span>Licensed under <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/" target="_blank" rel="noopener">Polyform Noncommercial 1.0.0</a> — free to play and share, not for commercial use</span>
-        <span class="sep">·</span>
+      </div>
+      <div>
         <span>Map data © <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a></span>
-      </footer>
+      </div>
+    </footer>
     </div>
   </section>
 
